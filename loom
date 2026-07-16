@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ ! -f "$DIR/out/loom.jar" ] || [ -n "$(find "$DIR/src" -newer "$DIR/out/loom.jar" -print -quit 2>/dev/null)" ]; then
+  "$DIR/build.sh" >/dev/null
+fi
+exec java -jar "$DIR/out/loom.jar" "$@"
