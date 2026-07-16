@@ -1,0 +1,28 @@
+package {{package}}.web
+
+import java.time.Instant
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+{{#webFlux}}
+import reactor.core.publisher.Mono
+{{/webFlux}}
+
+data class Greeting(val message: String, val timestamp: String)
+
+@RestController
+@RequestMapping("/api")
+class HelloController {
+
+{{#webMvc}}
+    @GetMapping("/hello")
+    fun hello(@RequestParam(defaultValue = "world") name: String) =
+        Greeting("Hello, $name!", Instant.now().toString())
+{{/webMvc}}
+{{#webFlux}}
+    @GetMapping("/hello")
+    fun hello(@RequestParam(defaultValue = "world") name: String): Mono<Greeting> =
+        Mono.just(Greeting("Hello, $name!", Instant.now().toString()))
+{{/webFlux}}
+}

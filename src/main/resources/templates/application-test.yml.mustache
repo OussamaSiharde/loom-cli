@@ -1,0 +1,21 @@
+# Test profile written by Loom: unit and context tests run against in-memory H2
+# in {{h2Mode}} compatibility mode, so `mvn verify` works on a laptop with no
+# database running. Enable Testcontainers (--tc) for tests against the real engine.
+spring:
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE={{h2Mode}};DATABASE_TO_LOWER=TRUE
+    username: sa
+    password: ""
+{{#dataJpa}}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+{{/dataJpa}}
+{{#flyway}}
+  flyway:
+    enabled: false
+{{/flyway}}
+{{#liquibase}}
+  liquibase:
+    enabled: false
+{{/liquibase}}

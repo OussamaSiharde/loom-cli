@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>{{bootVersion}}</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>{{groupId}}</groupId>
+    <artifactId>{{name}}</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>{{name}}</name>
+    <description>{{description}}</description>
+
+    <properties>
+        <java.version>{{javaVersion}}</java.version>
+{{#kotlin}}
+        <kotlin.version>{{kotlinVersion}}</kotlin.version>
+{{/kotlin}}
+    </properties>
+
+{{#tcBomImport}}
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>{{tcBomVersion}}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+{{/tcBomImport}}
+    <dependencies>
+{{#deps}}
+        <dependency>
+            <groupId>{{g}}</groupId>
+            <artifactId>{{a}}</artifactId>
+{{#v}}
+            <version>{{v}}</version>
+{{/v}}
+{{#scope}}
+            <scope>{{scope}}</scope>
+{{/scope}}
+{{#optional}}
+            <optional>true</optional>
+{{/optional}}
+{{#hasExclusions}}
+            <exclusions>
+{{#exclusions}}
+                <exclusion>
+                    <groupId>{{g}}</groupId>
+                    <artifactId>{{a}}</artifactId>
+                </exclusion>
+{{/exclusions}}
+            </exclusions>
+{{/hasExclusions}}
+        </dependency>
+{{/deps}}
+    </dependencies>
+
+    <build>
+{{#kotlin}}
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+{{/kotlin}}
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+{{#lombok}}
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+{{/lombok}}
+            </plugin>
+{{#lombok}}
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+{{/lombok}}
+{{#kotlin}}
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <configuration>
+                    <args>
+                        <arg>-Xjsr305=strict</arg>
+                    </args>
+                    <compilerPlugins>
+                        <plugin>spring</plugin>
+{{#dataJpa}}
+                        <plugin>jpa</plugin>
+{{/dataJpa}}
+                    </compilerPlugins>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-allopen</artifactId>
+                        <version>${kotlin.version}</version>
+                    </dependency>
+{{#dataJpa}}
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-noarg</artifactId>
+                        <version>${kotlin.version}</version>
+                    </dependency>
+{{/dataJpa}}
+                </dependencies>
+            </plugin>
+{{/kotlin}}
+{{#jacoco}}
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>{{jacocoVersion}}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+{{/jacoco}}
+        </plugins>
+    </build>
+
+</project>

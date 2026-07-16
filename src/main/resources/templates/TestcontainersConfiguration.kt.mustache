@@ -1,0 +1,79 @@
+package {{package}}
+
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection
+import org.springframework.context.annotation.Bean
+{{#tcRedis}}
+import org.testcontainers.containers.GenericContainer
+{{/tcRedis}}
+{{#tcMariadb}}
+import org.testcontainers.containers.MariaDBContainer
+{{/tcMariadb}}
+{{#tcMongo}}
+import org.testcontainers.containers.MongoDBContainer
+{{/tcMongo}}
+{{#tcMysql}}
+import org.testcontainers.containers.MySQLContainer
+{{/tcMysql}}
+{{#tcPostgres}}
+import org.testcontainers.containers.PostgreSQLContainer
+{{/tcPostgres}}
+{{#tcRabbit}}
+import org.testcontainers.containers.RabbitMQContainer
+{{/tcRabbit}}
+{{#tcKafka}}
+import org.testcontainers.kafka.KafkaContainer
+{{/tcKafka}}
+
+/**
+ * Containers wired straight into the Spring context via @ServiceConnection:
+ * no URLs, no @DynamicPropertySource - Boot derives the connection details.
+ */
+@TestConfiguration(proxyBeanMethods = false)
+class TestcontainersConfiguration {
+
+{{#tcPostgres}}
+    @Bean
+    @ServiceConnection
+    fun postgres(): PostgreSQLContainer<*> = PostgreSQLContainer("postgres:16-alpine")
+
+{{/tcPostgres}}
+{{#tcMysql}}
+    @Bean
+    @ServiceConnection
+    fun mysql(): MySQLContainer<*> = MySQLContainer("mysql:8.4")
+
+{{/tcMysql}}
+{{#tcMariadb}}
+    @Bean
+    @ServiceConnection
+    fun mariadb(): MariaDBContainer<*> = MariaDBContainer("mariadb:11")
+
+{{/tcMariadb}}
+{{#tcMongo}}
+    @Bean
+    @ServiceConnection
+    fun mongo(): MongoDBContainer = MongoDBContainer("mongo:7")
+
+{{/tcMongo}}
+{{#tcKafka}}
+    @Bean
+    @ServiceConnection
+    fun kafka(): KafkaContainer = KafkaContainer("apache/kafka:3.8.0")
+
+{{/tcKafka}}
+{{#tcRabbit}}
+    @Bean
+    @ServiceConnection
+    fun rabbit(): RabbitMQContainer = RabbitMQContainer("rabbitmq:3.13-alpine")
+
+{{/tcRabbit}}
+{{#tcRedis}}
+    @Bean
+    @ServiceConnection(name = "redis")
+    fun redis(): GenericContainer<*> = GenericContainer<Nothing>("redis:7-alpine").apply {
+        withExposedPorts(6379)
+    }
+
+{{/tcRedis}}
+}

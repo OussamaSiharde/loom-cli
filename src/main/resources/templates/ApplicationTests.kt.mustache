@@ -1,0 +1,23 @@
+package {{package}}
+
+{{#contextTest}}
+import org.springframework.boot.test.context.SpringBootTest
+{{#tcImport}}
+import org.springframework.context.annotation.Import
+{{/tcImport}}
+{{/contextTest}}
+import org.junit.jupiter.api.Test
+
+{{#contextTest}}
+@SpringBootTest
+{{#tcImport}}
+@Import(TestcontainersConfiguration::class)
+{{/tcImport}}
+{{/contextTest}}
+class {{appClass}}Tests {
+
+    @Test
+    fun {{testMethod}}() {
+        // {{testComment}}
+    }
+}

@@ -1,0 +1,38 @@
+package {{package}}.config
+
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+{{#httpRestClient}}
+import org.springframework.web.client.RestClient
+{{/httpRestClient}}
+{{#httpRestTemplate}}
+import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.web.client.RestTemplate
+{{/httpRestTemplate}}
+{{#httpWebClient}}
+import org.springframework.web.reactive.function.client.WebClient
+{{/httpWebClient}}
+
+@Configuration
+class HttpClientConfig {
+
+{{#httpRestClient}}
+    @Bean
+    fun restClient(builder: RestClient.Builder): RestClient =
+        builder
+            .baseUrl("https://api.example.com")
+            .build()
+{{/httpRestClient}}
+{{#httpWebClient}}
+    @Bean
+    fun webClient(builder: WebClient.Builder): WebClient =
+        builder
+            .baseUrl("https://api.example.com")
+            .build()
+{{/httpWebClient}}
+{{#httpRestTemplate}}
+    @Bean
+    fun restTemplate(builder: RestTemplateBuilder): RestTemplate =
+        builder.build()
+{{/httpRestTemplate}}
+}

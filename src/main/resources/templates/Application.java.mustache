@@ -1,0 +1,18 @@
+package {{package}};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+{{#cacheAny}}
+import org.springframework.cache.annotation.EnableCaching;
+{{/cacheAny}}
+
+@SpringBootApplication
+{{#cacheAny}}
+@EnableCaching
+{{/cacheAny}}
+public class {{appClass}} {
+
+    public static void main(String[] args) {
+        SpringApplication.run({{appClass}}.class, args);
+    }
+}

@@ -1,0 +1,42 @@
+package {{package}};
+
+{{#contextTest}}
+import org.springframework.boot.test.context.SpringBootTest;
+{{#tcImport}}
+import org.springframework.context.annotation.Import;
+{{/tcImport}}
+{{/contextTest}}
+{{#testng}}
+{{#contextTest}}
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+{{/contextTest}}
+import org.testng.annotations.Test;
+{{/testng}}
+{{#junit}}
+import org.junit.jupiter.api.Test;
+{{/junit}}
+
+{{#contextTest}}
+@SpringBootTest
+{{#tcImport}}
+@Import(TestcontainersConfiguration.class)
+{{/tcImport}}
+{{/contextTest}}
+{{#testng}}
+public class {{appClass}}Tests{{#contextTest}} extends AbstractTestNGSpringContextTests{{/contextTest}} {
+
+    @Test
+    public void {{testMethod}}() {
+        // {{testComment}}
+    }
+}
+{{/testng}}
+{{#junit}}
+class {{appClass}}Tests {
+
+    @Test
+    void {{testMethod}}() {
+        // {{testComment}}
+    }
+}
+{{/junit}}
