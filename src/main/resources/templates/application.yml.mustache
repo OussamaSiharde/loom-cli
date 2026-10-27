@@ -1,0 +1,100 @@
+spring:
+  application:
+    name: {{name}}
+{{#dataJpaOrJdbc}}
+  datasource:
+    url: {{jdbcUrl}}
+    username: {{dbUser}}
+    password: "{{dbPass}}"
+{{/dataJpaOrJdbc}}
+{{#dataJpa}}
+  jpa:
+    hibernate:
+      ddl-auto: {{ddlAuto}}
+    open-in-view: false
+{{/dataJpa}}
+{{#dataR2dbc}}
+  r2dbc:
+    url: {{r2dbcUrl}}
+    username: {{dbUser}}
+    password: "{{dbPass}}"
+{{/dataR2dbc}}
+{{#flywayJdbcBridge}}
+  # Flyway runs over JDBC even in reactive apps: same DB, blocking driver, migration time only.
+  flyway:
+    url: {{jdbcUrl}}
+    user: {{dbUser}}
+    password: "{{dbPass}}"
+{{/flywayJdbcBridge}}
+{{#liquibaseJdbcBridge}}
+  # Liquibase runs over JDBC even in reactive apps: same DB, blocking driver, migration time only.
+  liquibase:
+    url: {{jdbcUrl}}
+    user: {{dbUser}}
+    password: "{{dbPass}}"
+{{/liquibaseJdbcBridge}}
+{{#springDataBlock}}
+  data:
+{{#dataMongo}}
+    mongodb:
+      uri: mongodb://localhost:27017/{{dbName}}
+{{/dataMongo}}
+{{#redisBoot3}}
+    redis:
+      host: localhost
+      port: 6379
+{{/redisBoot3}}
+{{/springDataBlock}}
+{{#redisBoot2}}
+  redis:
+    host: localhost
+    port: 6379
+{{/redisBoot2}}
+{{#cacheAny}}
+  cache:
+    type: {{cacheType}}
+{{#cacheCaffeine}}
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+{{/cacheCaffeine}}
+{{/cacheAny}}
+{{#h2console}}
+  h2:
+    console:
+      enabled: true
+{{/h2console}}
+{{#gsonMvc}}
+  mvc:
+    converters:
+      preferred-json-mapper: gson
+{{/gsonMvc}}
+{{#mqKafka}}
+  kafka:
+    bootstrap-servers: localhost:9092
+{{/mqKafka}}
+{{#mqRabbit}}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+{{/mqRabbit}}
+{{#mqArtemis}}
+  artemis:
+    broker-url: tcp://localhost:61616
+    user: artemis
+    password: artemis
+{{/mqArtemis}}
+{{#webAny}}
+
+server:
+  port: {{serverPort}}
+{{/webAny}}
+{{#actuatorWeb}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+{{/actuatorWeb}}
