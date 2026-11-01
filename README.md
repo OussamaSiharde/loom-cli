@@ -1,13 +1,21 @@
 # Loom
 
-**Weave production-grade Spring Boot projects from your terminal.**
+![CI](https://github.com/OussamaSiharde/loom-cli/actions/workflows/ci.yml/badge.svg)
 
-Loom is an interactive scaffolder for the JVM: answer a questionnaire (or pass
-flags), and it weaves a ready-to-import Maven project where every dependency,
-version, and exclusion has been **resolved for compatibility** — not
-copy-pasted from a five-year-old blog post.
+A command line scaffolder for Spring Boot. You describe the stack, and Loom generates a
+Maven project with compatible dependencies, or explains why it changed your choice.
 
 ![Loom resolving a risky stack, excerpt of a real run](docs/demo.svg)
+
+## The problem
+
+Most time lost on a new service isn't the code. It's the combinations that fail later:
+Log4j2 with the default logging starter still in place, Gson on WebFlux, Flyway on
+R2DBC with no JDBC driver, or Boot 2.7 coordinates that have since moved. Each one is
+small, and each one costs an afternoon.
+
+Loom turns those rules into code. Every rule is explicit and tested, and every change
+it makes is printed, so nothing happens silently.
 
 <details>
 <summary>Everything the questionnaire covers</summary>
@@ -33,8 +41,6 @@ Extras:              JaCoCo · Lombok · OpenAPI · Actuator · Docker · GitHub
 
 </details>
 
-Unzip → `mvn verify` → green. That's the contract.
-
 ## Quick start
 
 ```bash
@@ -53,10 +59,34 @@ Or fully scripted:
 Run `./loom --help` for every flag. Prefer Maven? `mvn package` produces the
 same `target/loom.jar`.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    Flags[CLI flags] --> Spec[Spec<br/>all choices]
+    Prompt[Questionnaire] --> Spec
+    Spec --> Normalize[normalize<br/>fix conflicts,<br/>explain each change]
+    Normalize --> Resolver[Resolver<br/>artifacts, versions,<br/>exclusions, file plan]
+    Resolver --> Renderer[Renderer<br/>Mustache subset]
+    Templates[Templates] --> Renderer
+    Renderer --> Project[Maven project,<br/>Docker, CI, tests]
+```
+
+## Design decisions
+
+| Decision | Why | Trade-off |
+|---|---|---|
+| No runtime dependencies | Nothing to audit, and it builds with `javac` alone | A small hand-written template engine |
+| One version catalog | Every pinned version sits at the top of `Resolver.java` | Pins need bumping by hand |
+| No version on Spring-managed artifacts | The Boot BOM stays the source of truth | Only pinned extras can drift |
+| Fix and explain, rather than fail | You keep moving, and you learn why | Loom can override a choice |
+| Plain templates | Fork them and Loom generates your company standard | Maven only for now |
+
+The full matrix is in [docs/DECISION-TREE.md](docs/DECISION-TREE.md).
+
 ## Why not Spring Initializr?
 
-Initializr is great — for the happy path. Loom targets the projects real
-teams actually maintain:
+Initializr is the right tool for a standard project. Loom covers what it leaves to you:
 
 - **The legacy line.** Spring Boot 2.7 / `javax` scaffolding with the *right*
   coordinates (old ones where the BOM still needs them, TestNG 7.5.1 and EasyMock 4.3
@@ -78,36 +108,19 @@ teams actually maintain:
   migration time. Boot 3 + Java 8? Bumped to 17. Every decision is printed.
 - **CI on day zero.** A GitHub Actions workflow tuned to the generated stack.
 
-## Design
+## Testing
 
-![How Loom weaves a project](docs/architecture.svg)
-
-- **Zero runtime dependencies.** The CLI, the questionnaire, the resolution engine and
-  the Mustache-subset template engine are ~1,400 lines of plain JDK 17. No
-  supply chain, nothing to audit, builds with `javac` alone (`./build.sh`).
-- **One version catalog.** Every pinned version lives at the top of
-  [`Resolver.java`](src/main/java/dev/loom/Resolver.java). Anything Spring
-  manages carries no version at all — the Boot BOM stays the single source of
-  truth, so generated projects age well.
-- **Templates you can read.** Plain Mustache files in
-  [`src/main/resources/templates/`](src/main/resources/templates). Fork the
-  repo, edit a template, and Loom generates *your* company standard.
-
-The full option matrix and every resolution rule is documented in
-[docs/DECISION-TREE.md](docs/DECISION-TREE.md).
-
-## Verifying a change
+| Layer | What it checks | Runs in CI |
+|---|---|---|
+| 20 unit tests | Template engine, compatibility rules, resolver | Yes |
+| Smoke suite | 5 very different stacks: no unrendered tags, no leaked nulls, valid XML and YAML | Yes |
+| Generated projects | `mvn verify` passed on 12 generated stacks in October 2026 | No, run by hand |
 
 ```bash
-mvn verify          # unit tests: template engine, compatibility rules, resolver
-./build.sh          # compile + package (javac only)
-./scripts/smoke.sh  # generates 5 very different stacks and validates them
+mvn verify          # unit tests
+./build.sh          # compile and package with javac only
+./scripts/smoke.sh  # generate and validate 5 stacks
 ```
-
-The smoke suite renders a modern default, a kitchen-sink enterprise stack, a
-Kotlin reactive gateway, a Boot 2.7 legacy service and a minimal library, then
-checks for unrendered tags, leaked nulls, and malformed XML/YAML. CI runs all
-three commands.
 
 ## Roadmap
 
