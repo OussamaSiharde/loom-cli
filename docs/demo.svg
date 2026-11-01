@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="324" viewBox="0 0 860 324" role="img" aria-label="loom (excerpt of a real run)">
+<rect width="860" height="324" rx="10" fill="#0d1117" stroke="#30363d"/>
+<circle cx="20" cy="18" r="6" fill="#ff5f56"/>
+<circle cx="40" cy="18" r="6" fill="#ffbd2e"/>
+<circle cx="60" cy="18" r="6" fill="#27c93f"/>
+<text x="430.0" y="23" fill="#8b949e" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle">loom (excerpt of a real run)</text>
+<text x="20" y="60" fill="#e6edf3" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">$ ./loom -y --name orders-api --web webflux --json gson --db postgres \</text>
+<text x="20" y="80" fill="#e6edf3" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">         --data jpa --migrations flyway --tc --openapi</text>
+<text x="20" y="100" fill="#3fb950" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">Woven 13 files into ./orders-api</text>
+<text x="20" y="120" fill="#e6edf3" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve"></text>
+<text x="20" y="140" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">  - Java 21</text>
+<text x="20" y="160" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">  - Spring Boot 3.5.6 (Jakarta EE)</text>
+<text x="20" y="180" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">  - Spring WebFlux on Reactor Netty</text>
+<text x="20" y="200" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">  - PostgreSQL via Spring Data JPA + Flyway</text>
+<text x="20" y="220" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">  - JUnit 5 + Mockito + Testcontainers</text>
+<text x="20" y="240" fill="#e6edf3" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve"></text>
+<text x="20" y="260" fill="#d29922" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">Resolution notes:</text>
+<text x="20" y="280" fill="#d29922" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">  ! WebFlux codecs are Jackson-based; Gson is MVC-only -&gt; Jackson selected.</text>
+<text x="20" y="300" fill="#d29922" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" xml:space="preserve">  ! Blocking JPA on the WebFlux event loop will hurt throughput; consider R2DBC.</text>
+</svg>
